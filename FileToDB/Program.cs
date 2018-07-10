@@ -46,15 +46,16 @@ namespace FileToDB
             }
         }
 
-        public FileToDB(string _fileName, string _tableName = "")
+        public FileToDB(string _fileName, string _tableName = "lol")
         {
             this.fileName = _fileName;
             this.tableName = _tableName;
+            
 
         }
 
         //This method return the definition of fields given the heading of the file
-        private List<Field> defineFields(string fileName)
+        private void defineFields(string fileName)
         {
             List<Field> _return = new List<Field>();
             int iniP = 0;
@@ -85,7 +86,9 @@ namespace FileToDB
 
                 _return.Add(field);
             } while (strLine.IndexOf(" ") != -1);
-            return _return;
+            this.fields = _return;
+
+            return;
         }
 
         //This method return the requested line of the requested file
@@ -97,16 +100,55 @@ namespace FileToDB
             return strLine;
         } 
 
+        //This method takes a line and separates its content in the correspondant fields
+        public List<String> separateFields(List<Field> fields, string strLine)
+        {
+            List<string> _return = new List<string>();
+            foreach (Field _field in fields)
+            {
+                _return.Add(strLine.Substring(_field.initialPosition, _field.len).Trim());
+            }
+
+            return _return;
+        }
+
+        //This method creates the INSERT statement
+        public string createInsert(List<Field> fields, List<string> detalle)
+        {
+            string _return = "";
+            int index = 0;
+            _return = "INSERT INTO " + this.tableName + " (";
+            foreach (Field _field in fields)
+            {
+                _return += _field.name + ", ";
+            }
+
+            return "";
+
+        }
+
         public void testing()
         {
             ////readLine
             //Console.WriteLine(readLine(this.fileName, 1));
 
-            //defineFields
-            foreach (Field _field in defineFields(this.fileName))
+            ////defineFields
+            //this.defineFields(fileName);
+            //foreach (Field _field in this.fields)
+            //{
+            //    Console.WriteLine(_field.name + "; Initial Postion: {0}, Length: {1}", _field.initialPosition, _field.len);
+            //}
+
+            //separateFields
+            this.defineFields(fileName);
+            string l = "";
+            l = readLine(fileName, 3);
+
+            foreach (string s in this.separateFields(this.fields, l))
             {
-                Console.WriteLine(_field.name + "; Initial Postion: {0}, Length: {1}", _field.initialPosition, _field.len);
-            }
+                Console.WriteLine(s);
+            } 
+                
         }
     }
 
