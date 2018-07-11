@@ -15,12 +15,21 @@ namespace FileToDB
             Console.WriteLine("Testing the output of: readLine");
             //FileToDB lol = new FileToDB(args[0]);
             FileToDB lol = new FileToDB(@"C:\Users\vdelarosa\Documents\Visual Studio 2017\Projects\FileToDB\FileToDB\bin\Debug\pruebaCom.txt");
-            //lol.testing();
-            lol.createScript();
+            lol.testing();
+            //lol.createScript();
             Console.WriteLine(":v");
             Console.ReadKey();
         }
-    } 
+    }
+
+    public enum SQLType
+    {
+        Varchar = 1,
+        Numeric = 2,
+        Decimal = 3,
+        DateTime = 4
+
+    }
 
     //Class that contains program logic
     class FileToDB
@@ -37,14 +46,14 @@ namespace FileToDB
             //stands for length, to avoid confusion with reserved keyword
             public int len;
             //Stands for type, to avoid confusion
-            public int typ;
+            public SQLType typ;
 
-            public Field(string _name, int _initialPosition, int _len, int _typ)
+            public Field(string _name, int _initialPosition, int _len)
             {
                 name = _name;
                 initialPosition = _initialPosition;
                 len = _len;
-                typ = _typ;
+                typ = SQLType.Varchar;
             }
         }
 
@@ -65,14 +74,10 @@ namespace FileToDB
             string strLine = "";
             strLine = readLine(fileName, 2);
             this.recordSize = strLine.Length;
-            //while (strLine.IndexOf(" ") != 0)
             do
             {
                 Field field = new Field();
                 field.initialPosition = iniP;
-                //field.len = strLine.IndexOf(" ") == -1 ? strLine.Length : strLine.IndexOf(" ");
-                //field.name = readLine(fileName, 1).Substring(field.initialPosition, field.len).Trim();
-                //strLine = strLine.Substring(field.len + 1);
                 if (strLine.IndexOf(" ") == -1)
                 {
                     field.len = strLine.Length;
@@ -193,6 +198,109 @@ namespace FileToDB
             }
         }
 
+        //This method determines the most compatible SQL data type for the field
+        private SQLType defineType(List<string> values, Field _field)
+        {
+            bool blDate = true;
+            bool blDecimal = true;
+            bool blNumeric = true;
+            
+            foreach(string value in values)
+            {
+                blDate = DateTime.TryParse(value, out DateTime d) ? blDate : false;
+                blDecimal = validateDecimalType(value) ? blDecimal : false;
+                blNumeric = blDecimal ? blNumeric : (Int32.TryParse(value, out int i) ? blNumeric : false);
+            }
+
+            if (blDate)
+            {
+                _field.typ = SQLType.Varchar;
+                return SQLType.DateTime;
+            } else if (blDecimal)
+            {
+                _field.typ = SQLType.Decimal;
+                return SQLType.Decimal;
+
+            } else if (blNumeric)
+            {
+                _field.typ = SQLType.Numeric;
+                return SQLType.Numeric;
+            }else
+            {
+                _field.typ = SQLType.Varchar;
+                return SQLType.Varchar;
+            }
+
+        }
+
+        private bool validateDecimalType(string value)
+        {
+            if (value.Contains("."))
+            {
+                return double.TryParse(value, out double i);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void defineFieldTypes()
+        {
+            //Creating a new list because cannot modify the ones iterating
+            List<Field> _fields = new List<Field>();
+            foreach (Field field in this.fields)
+            {
+                List<string> values = new List<string>();
+
+                for (int i = 3; i < File.ReadLines(this.fileName).Count(); i++)
+                {
+                    string strLine = readLine(this.fileName, i);
+                    if (validateLine(strLine))
+                    {
+                        values.Add(strLine.Substring(field.initialPosition, field.len));
+                    }
+                    
+                }
+                Field _f = field;
+                _f.typ = defineType(values, field);
+                _fields.Add(_f);
+                //defineType(values, field);
+            }
+            this.fields = _fields;
+        }
+
+        private string createTable()
+        {
+            string _strReturn = "";
+            _strReturn = "CREATE TABLE " + this.tableName + "(\n";
+            foreach (Field _field in this.fields)
+            {
+                _strReturn += "\t" + _field.name + " " + SQLTypeDefinition(_field) + ", \n";
+            }
+
+            _strReturn = _strReturn.Substring(0, _strReturn.Length - 3) + "\n)";
+                
+            return _strReturn;
+        }
+
+        //This method determines how the SQL type should be specified
+        private string SQLTypeDefinition(Field _field)
+        {
+            switch (_field.typ)
+            {
+                case SQLType.Varchar:
+                    return "VARCHAR(MAX)";    
+                case SQLType.Numeric:
+                    return "NUMERIC";
+                case SQLType.Decimal:
+                    return "DECIMAL(14, 2)";
+                default:
+                    return "DATETIME";
+            }
+
+        }
+
         public void testing()
         {
             ////readLine
@@ -227,7 +335,21 @@ namespace FileToDB
             //{
             //    Console.WriteLine(s);
             //}
-                
+
+            ////defineFieldTypes
+            //this.defineFields(fileName);
+            //this.defineFieldTypes();
+            //foreach(Field f in this.fields)
+            //{
+
+            //    Console.WriteLine(f.typ + ", {0}", SQLTypeDefinition(f));
+            //}
+
+            //createTable
+            this.defineFields(fileName);
+            this.defineFieldTypes();
+            Console.WriteLine(createTable());
+
         }
     }
 
