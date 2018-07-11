@@ -1,3 +1,16 @@
+CREATE TABLE lol(
+	idregistro NUMERIC, 
+	tipo_reg VARCHAR(MAX), 
+	campo VARCHAR(MAX), 
+	tipo VARCHAR(MAX), 
+	longitud NUMERIC, 
+	requerido VARCHAR(MAX), 
+	posi NUMERIC, 
+	posf NUMERIC, 
+	orden NUMERIC, 
+	campo_bd VARCHAR(MAX), 
+	Valor_constante VARCHAR(MAX)
+)
 INSERT INTO lol (idregistro, tipo_reg, campo, tipo, longitud, requerido, posi, posf, orden, campo_bd, Valor_constante)
 VALUES('62', 'D', 'NSS', 'N', '9', 'S', '2', '10', '1', 'NSS', '')
 INSERT INTO lol (idregistro, tipo_reg, campo, tipo, longitud, requerido, posi, posf, orden, campo_bd, Valor_constante)

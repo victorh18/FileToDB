@@ -15,8 +15,9 @@ namespace FileToDB
             Console.WriteLine("Testing the output of: readLine");
             //FileToDB lol = new FileToDB(args[0]);
             FileToDB lol = new FileToDB(@"C:\Users\vdelarosa\Documents\Visual Studio 2017\Projects\FileToDB\FileToDB\bin\Debug\pruebaCom.txt");
+            lol.createTableScript = true;
             lol.testing();
-            //lol.createScript();
+            lol.createScript();
             Console.WriteLine(":v");
             Console.ReadKey();
         }
@@ -38,6 +39,7 @@ namespace FileToDB
         private List<Field> fields { get; set; }
         public string tableName { get; set; }
         public int recordSize { get; set; }
+        public bool createTableScript { get; set; }
 
         private struct Field
         {
@@ -154,12 +156,21 @@ namespace FileToDB
         }
 
         public void createScript()
-        //private List<string> createScript()
         {
+            
+
             //First we define the fields
             this.defineFields(fileName);
             //We create the file where we're putting the script
             List<string> lines = new List<string>();
+
+            //If the user specifies the creation of the table as well...
+            if (createTableScript)
+            {
+                defineFieldTypes();
+                lines.Add(createTable());
+            }
+
             for (int i = 3; i < File.ReadLines(fileName).Count(); i++)
             {
                 List<string> ls = separateFields(this.fields, readLine(this.fileName, i));
@@ -169,6 +180,8 @@ namespace FileToDB
                 }
                 
             }
+
+            
 
             File.WriteAllLines("script.sql", lines);
             Console.WriteLine(":D");
