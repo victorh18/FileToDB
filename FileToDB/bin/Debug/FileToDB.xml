@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FileToDB</name>
+    </assembly>
+    <members>
+        <member name="M:FileToDB.FileToDB.#ctor(System.String,System.String)">
+            <summary>
+            Consturctor lol
+            </summary>
+            <param name="_fileName"></param>
+            <param name="_tableName"></param>
+        </member>
+    </members>
+</doc>

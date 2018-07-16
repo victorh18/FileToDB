@@ -5,3 +5,4 @@ c:\users\vdelarosa\documents\visual studio 2017\Projects\FileToDB\FileToDB\obj\D
 c:\users\vdelarosa\documents\visual studio 2017\Projects\FileToDB\FileToDB\obj\Debug\FileToDB.csproj.CoreCompileInputs.cache
 c:\users\vdelarosa\documents\visual studio 2017\Projects\FileToDB\FileToDB\obj\Debug\FileToDB.exe
 c:\users\vdelarosa\documents\visual studio 2017\Projects\FileToDB\FileToDB\obj\Debug\FileToDB.pdb
+C:\Users\vdelarosa\documents\visual studio 2017\Projects\FileToDB\FileToDB\bin\Debug\FileToDB.xml

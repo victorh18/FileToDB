@@ -11,12 +11,36 @@ namespace FileToDB
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("-------------    DEGUGGIN MODE   ---------------------");
-            Console.WriteLine("Testing the output of: readLine");
+            string file = "";
+            string tableName = "";
+            bool generateCreate = false; 
+            
+            if(args.Length == 0)
+            {
+                Console.WriteLine("Incorrect use of the program! \nCorrect usage: FileToDB.exe <file> <opt: tableName> <opt: generateCreateScript>");
+                return;
+            }
+            if(args.Length > 0)
+            {
+                file = args[0];
+            }
+            if(args.Length > 1)
+            {
+                tableName = args[1];
+            }
+            if(args.Length > 2)
+            {
+                generateCreate = Boolean.Parse(args[2]);
+            }
+
+
+            //Console.WriteLine("-------------    DEGUGGIN MODE   ---------------------");
+            //Console.WriteLine("Testing the output of: readLine");
             //FileToDB lol = new FileToDB(args[0]);
-            FileToDB lol = new FileToDB(@"C:\Users\vdelarosa\Documents\Visual Studio 2017\Projects\FileToDB\FileToDB\bin\Debug\pruebaCom.txt");
-            lol.createTableScript = true;
-            lol.testing();
+            //FileToDB lol = new FileToDB(@"C:\Users\vdelarosa\Documents\Visual Studio 2017\Projects\FileToDB\FileToDB\bin\Debug\pruebaCom.txt");
+            FileToDB lol = new FileToDB(file, tableName);
+            lol.createTableScript = generateCreate;
+            //lol.testing();
             lol.createScript();
             Console.WriteLine(":v");
             Console.ReadKey();
@@ -59,6 +83,11 @@ namespace FileToDB
             }
         }
 
+        /// <summary>
+        /// Consturctor lol
+        /// </summary>
+        /// <param name="_fileName"></param>
+        /// <param name="_tableName"></param>
         public FileToDB(string _fileName, string _tableName = "lol")
         {
             this.fileName = _fileName;
@@ -146,7 +175,15 @@ namespace FileToDB
 
             foreach (string _detalle in detalle)
             {
-                _return += quote(_detalle) + ", ";
+                if(_detalle == "NULL")
+                {
+                    _return += _detalle + ", ";
+                }
+                else
+                {
+                    _return += quote(_detalle) + ", ";
+                }
+                
             }
 
             _return = _return.Substring(0, _return.Length - 2) + ")";
@@ -183,7 +220,7 @@ namespace FileToDB
 
             
 
-            File.WriteAllLines("script.sql", lines);
+            File.WriteAllLines(this.fileName + "sqlScript.sql", lines);
             Console.WriteLine(":D");
             //return lines;
 
