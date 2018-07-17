@@ -13,16 +13,18 @@ namespace FileToDB
         {
             string file = "";
             string tableName = "";
-            bool generateCreate = false; 
-            
-            if(args.Length == 0)
+            bool generateCreate = false;
+
+            if (args.Length == 0)
             {
                 Console.WriteLine("Incorrect use of the program! \nCorrect usage: FileToDB.exe <file> <opt: tableName> <opt: generateCreateScript>");
                 return;
             }
-            if(args.Length > 0)
+            if (args.Length > 0)
             {
                 file = args[0];
+                tableName = Path.GetFileNameWithoutExtension(file);
+                
             }
             if(args.Length > 1)
             {
@@ -33,16 +35,10 @@ namespace FileToDB
                 generateCreate = Boolean.Parse(args[2]);
             }
 
-
-            //Console.WriteLine("-------------    DEGUGGIN MODE   ---------------------");
-            //Console.WriteLine("Testing the output of: readLine");
-            //FileToDB lol = new FileToDB(args[0]);
-            //FileToDB lol = new FileToDB(@"C:\Users\vdelarosa\Documents\Visual Studio 2017\Projects\FileToDB\FileToDB\bin\Debug\pruebaCom.txt");
             FileToDB lol = new FileToDB(file, tableName);
             lol.createTableScript = generateCreate;
-            //lol.testing();
             lol.createScript();
-            Console.WriteLine(":v");
+            Console.WriteLine("Script generated! \nPress any key to exit the program...");
             Console.ReadKey();
         }
     }
@@ -92,7 +88,6 @@ namespace FileToDB
         {
             this.fileName = _fileName;
             this.tableName = _tableName;
-            
 
         }
 
@@ -220,10 +215,9 @@ namespace FileToDB
 
             
 
-            File.WriteAllLines(this.fileName + "sqlScript.sql", lines);
+            File.WriteAllLines(Path.GetFileNameWithoutExtension(this.fileName) + ".sql", lines);
             Console.WriteLine(":D");
-            //return lines;
-
+            
         }
 
         private string quote(string text)
@@ -236,8 +230,10 @@ namespace FileToDB
         {
             //It must be the same lenght as the fields extracted
             if (
-                !string.IsNullOrEmpty(strLine) &&
-                !strLine.Contains("rows affected")
+                !string.IsNullOrEmpty(strLine) && (
+                !strLine.Contains("rows affected") &&
+                !strLine.Contains("row affected")
+                    )
                 )
             {
                 return true;
