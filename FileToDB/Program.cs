@@ -253,14 +253,14 @@ namespace FileToDB
             
             foreach(string value in values)
             {
-                blDate = DateTime.TryParse(value, out DateTime d) ? blDate : false;
+                blDate = DateTime.TryParse(value.Trim(), out DateTime d) || value.Trim() == "NULL" ? blDate : false;
                 blDecimal = validateDecimalType(value) ? blDecimal : false;
                 blNumeric = blDecimal ? blNumeric : (Int32.TryParse(value, out int i) ? blNumeric : false);
             }
 
             if (blDate)
             {
-                _field.typ = SQLType.Varchar;
+                _field.typ = SQLType.DateTime;
                 return SQLType.DateTime;
             } else if (blDecimal)
             {
