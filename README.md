@@ -1,1 +1,2 @@
-":v" 
+--TODO:
+-Add support for BIT column type
